@@ -18,11 +18,11 @@ int count_x(char *str, char c)
     return x;
 }
 
-char **parse_args(char *line, char delimiter)
+char **parse_args(char *line)
 {
-    int n = count_x(line, delimiter);
+    int n = count_x(line, ' ');
 
-    char **args = malloc((n + 2) * sizeof(char *));
+    char **args = malloc((n + 1) * sizeof(char *));
     char *l = malloc(strlen(line) * sizeof(char));
     strcpy(l, line);
 
@@ -30,7 +30,7 @@ char **parse_args(char *line, char delimiter)
     args[0] = 0;
     while (l)
     {
-        char *s = strsep(&l, &delimiter);
+        char *s = strsep(&l, " ");
         if (*s != 0)
         {
             args[i] = s;
@@ -40,4 +40,28 @@ char **parse_args(char *line, char delimiter)
 
     free(l);
     return args;
+}
+
+char ***parse_multi(char *line)
+{
+    int n = count_x(line, ';');
+
+    char ***commands = malloc((n + 1) * sizeof(char **));
+    char *l = malloc(strlen(line) * sizeof(char));
+    strcpy(l, line);
+
+    int i = 0;
+    commands[0] = 0;
+    while (l)
+    {
+        char *s = strsep(&l, ";");
+        if (*s != 0)
+        {
+            char **args = parse_args(s);
+            commands[i] = args;
+            commands[++i] = 0;
+        }
+    }
+
+    return commands;
 }

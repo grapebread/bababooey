@@ -25,18 +25,26 @@ int main(void)
         if ((p = strchr(c, '\n')) != NULL)
             *p = '\0';
 
-        char **args = parse_args(c, ' ');
+        int n = count_x(c, ';') + 1;
+        char ***commands = parse_multi(c);
 
-        if (fork())
+        for (int i = 0; i < n; ++i)
         {
-            int status;
-            int child_pid = wait(&status);
+            if (fork())
+            {
+                int status;
+                int child_pid = wait(&status);
+            }
+            else
+            {
+                execvp(commands[i][0], commands[i]);
+                printf("Command (%s) does not exist.\n", commands[i][0]);
+            }
+
+            free(commands[i]);
         }
-        else
-        {
-            int i = execvp(args[0], args);
-            return i;
-        }
+
+        free(commands);
     }
 }
 

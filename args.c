@@ -1,19 +1,28 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-char **parse_args(char *line)
+int count_x(char *str, char c)
 {
-    int spaces = 0;
-    char *c = line;
-    while (*c)
+    int x = 0;
+    while (*str)
     {
-        if (*c == ' ')
-            ++spaces;
-        ++c;
+        if (*str == c)
+        {
+            ++x;
+        }
+        ++str;
     }
 
-    char **args = malloc((spaces + 2) * sizeof(char *));
+    return x;
+}
+
+char **parse_args(char *line, char delimiter)
+{
+    int n = count_x(line, delimiter);
+
+    char **args = malloc((n + 2) * sizeof(char *));
     char *l = malloc(strlen(line) * sizeof(char));
     strcpy(l, line);
 
@@ -21,8 +30,12 @@ char **parse_args(char *line)
     args[0] = 0;
     while (l)
     {
-        args[i] = strsep(&l, " ");
-        args[++i] = 0;
+        char *s = strsep(&l, &delimiter);
+        if (*s != 0)
+        {
+            args[i] = s;
+            args[++i] = 0;
+        }
     }
 
     free(l);

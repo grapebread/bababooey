@@ -25,7 +25,7 @@ int main(void)
         if ((p = strchr(c, '\n')) != NULL)
             *p = '\0';
 
-        char **args = parse_args(c);
+        char **args = parse_args(c, ' ');
 
         if (fork())
         {

@@ -9,3 +9,6 @@ args.o: args.c
 
 run:
 	./bababooey
+
+clean:
+	@rm *.o *.exe* *.gch || true

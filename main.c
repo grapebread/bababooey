@@ -19,15 +19,14 @@ void a()
 
 int main(void)
 {
-    char *user = getlogin();
-    char *working = get_home();
+    char *working = get_working();
 
     while (1)
     {
         signal(SIGINT, sighandler);
 
         char c[BUFFER_SIZE];
-        printf("%s>", user);
+        printf("@ %s> ", working);
         fgets(c, BUFFER_SIZE, stdin);
 
         char *p;

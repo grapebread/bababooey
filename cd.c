@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#define BUFF_SIZE 512
+
 char *get_home()
 {
     char *home = "/home/";
@@ -12,6 +14,14 @@ char *get_home()
     strcat(start, user);
 
     return start;
+}
+
+char *get_working()
+{
+    char *cwd = malloc(BUFF_SIZE * sizeof(char)); // this is both wasteful and not enough
+    getcwd(cwd, BUFF_SIZE);
+
+    return cwd;
 }
 
 char *cd(char *working, char *path)
@@ -50,9 +60,10 @@ char *cd(char *working, char *path)
                 return temp;
             }
         }
-        else
-            err = chdir(home);
 
+        err = chdir(home);
+
+        free(path);
         if (err != 0)
         {
             printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
@@ -63,9 +74,7 @@ char *cd(char *working, char *path)
     }
     else if (!strncmp(path, "..", 2))
     {
-        char *cwd = malloc(512 * sizeof(char)); // this is both wasteful and not enough
-        getcwd(cwd, 512);
-
+        char *cwd = get_working();
         if (!strcmp(cwd, "/"))
             return working;
 
@@ -78,12 +87,21 @@ char *cd(char *working, char *path)
             }
         }
 
-        chdir(cwd);
+        free(home);
+        free(working);
+
+        int err = chdir(cwd);
+        if (err != 0)
+        {
+            printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
+            return working;
+        }
 
         return cwd;
     }
     else if (!strncmp(path, "/", 1))
     {
+        free(home);
         int err = chdir(path);
 
         if (err != 0)
@@ -93,5 +111,29 @@ char *cd(char *working, char *path)
         }
 
         return path;
+    }
+    else
+    {
+        int h_len = strlen(home);
+        char *temp = malloc((h_len + p_len + 1) * sizeof(char));
+        strncpy(temp, home, h_len);
+        temp[h_len] = '/';
+        for (int i = 0; i < p_len; ++i)
+            temp[h_len + i + 1] = path[i];
+
+        free(home);
+        free(path);
+
+        int err = chdir(temp);
+
+        if (err != 0)
+        {
+            printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
+            return working;
+        }
+
+        free(working);
+
+        return temp;
     }
 }

@@ -6,20 +6,29 @@
 #include <signal.h>
 
 #include "args.h"
+#include "cd.h"
+
+#define BUFFER_SIZE 512
 
 static void sighandler(int signo);
+
+void a()
+{
+    chdir("/");
+}
 
 int main(void)
 {
     char *user = getlogin();
+    char *working = get_home();
 
     while (1)
     {
         signal(SIGINT, sighandler);
 
-        char c[256];
+        char c[BUFFER_SIZE];
         printf("%s>", user);
-        fgets(c, 256, stdin);
+        fgets(c, BUFFER_SIZE, stdin);
 
         char *p;
         if ((p = strchr(c, '\n')) != NULL)
@@ -27,6 +36,11 @@ int main(void)
 
         int n = count_x(c, ';') + 1;
         char ***commands = parse_multi(c);
+
+        if (strcmp(commands[0][0], "exit") == 0)
+        {
+            exit(0);
+        }
 
         for (int i = 0; i < n; ++i)
         {
@@ -37,8 +51,20 @@ int main(void)
             }
             else
             {
-                execvp(commands[i][0], commands[i]);
-                printf("Command (%s) does not exist.\n", commands[i][0]);
+                if (strcmp(commands[i][0], "cd") == 0)
+                {
+                    if (commands[i][1])
+                        working = cd(working, commands[i][1]);
+                    else
+                        working = cd(working, "~");
+                    ++i;
+                }
+
+                if (i < n)
+                {
+                    execvp(commands[i][0], commands[i]);
+                    printf("Command (%s) does not exist.\n", commands[i][0]);
+                }
             }
 
             free(commands[i]);
@@ -46,6 +72,8 @@ int main(void)
 
         free(commands);
     }
+
+    free(working);
 }
 
 static void sighandler(int signo)

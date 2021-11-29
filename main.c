@@ -7,6 +7,7 @@
 
 #include "args.h"
 #include "cd.h"
+#include "redirection.h"
 
 #define BUFFER_SIZE 512
 
@@ -54,14 +55,20 @@ int main(void)
                 {
                     if (commands[i][1])
                         working = cd(working, commands[i][1]);
-                    else
+                    else{
                         working = cd(working, "~");
+                      }
                     ++i;
                 }
 
                 if (i < n)
                 {
+                    int backup_stdout = dup(STDOUT_FILENO);
+                    int backup_stdin = dup(STDIN_FILENO);
+                    int j = redirection(commands[i]);
                     execvp(commands[i][0], commands[i]);
+                    dup2(backup_stdout, STDOUT_FILENO);
+                    dup2(backup_stdin, STDIN_FILENO);
                     printf("Command (%s) does not exist.\n", commands[i][0]);
                 }
             }

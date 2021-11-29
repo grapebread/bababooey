@@ -1,5 +1,5 @@
-all: main.o args.o cd.o
-	gcc -o bababooey main.o args.o cd.o
+all: main.o args.o cd.o redirection.o
+	gcc -o bababooey main.o args.o cd.o redirection.o
 
 main.o: main.c
 	gcc -c main.c
@@ -9,6 +9,9 @@ args.o: args.c args.h
 
 cd.o: cd.c cd.h
 	gcc -c cd.c
+
+redirection.o: redirection.c redirection.h
+	gcc -c redirection.c
 
 run:
 	./bababooey

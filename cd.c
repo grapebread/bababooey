@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pwd.h>
 #include <unistd.h>
 
 #define BUFF_SIZE 512
@@ -8,7 +9,8 @@
 char *get_home()
 {
     char *home = "/home/";
-    char *user = getlogin();
+    struct passwd *pwd = getpwuid(getuid());
+    char *user = pwd->pw_name;
     char *start = malloc((strlen(home) + strlen(user)) * sizeof(char));
     strcpy(start, home);
     strcat(start, user);
@@ -28,7 +30,6 @@ char *cd(char *working, char *path)
 {
     char *home = get_home();
     int p_len = strlen(path);
-
     if (!strncmp(path, "~", 1))
     {
         int err = 0;
@@ -63,7 +64,6 @@ char *cd(char *working, char *path)
 
         err = chdir(home);
 
-        free(path);
         if (err != 0)
         {
             printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
@@ -114,15 +114,15 @@ char *cd(char *working, char *path)
     }
     else
     {
-        int h_len = strlen(home);
-        char *temp = malloc((h_len + p_len + 1) * sizeof(char));
-        strncpy(temp, home, h_len);
-        temp[h_len] = '/';
+        int w_len = strlen(working);
+        char *temp = malloc((w_len + p_len + 1) * sizeof(char));
+        strncpy(temp, working, w_len);
+        temp[w_len] = '/';
         for (int i = 0; i < p_len; ++i)
-            temp[h_len + i + 1] = path[i];
+          temp[w_len + i] = path[i];
+         printf("%s\n", temp);
 
         free(home);
-        free(path);
 
         int err = chdir(temp);
 

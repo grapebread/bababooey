@@ -3,6 +3,7 @@
 #include <string.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "err.h"
 
@@ -121,8 +122,9 @@ char *cd(char *working, char *path)
     }
     else if (!strncmp(path, "/", 1))
     {
-        free(home);
+    	printf("here\n");
         int err = chdir(path);
+        printf("err: %d\n", errno);
 
         return check_cd_err(working, path);
     }
@@ -147,16 +149,31 @@ char *cd(char *working, char *path)
     }
     else
     {
-        int w_len = strlen(working);
-        char *temp = malloc((w_len + p_len + 1) * sizeof(char));
-        strncpy(temp, working, w_len);
-        temp[w_len] = '/';
-        for (int i = 0; i < p_len; ++i)
-            temp[w_len + i + 1] = path[i];
+    	if (!strcmp(working, "/"))
+    	{
+    		char *temp = malloc((p_len + 1) * sizeof(char));
+    		temp[0] = '/';
+    		for (int i = 0; i < p_len; ++i)
+    			temp[i + 1] = path[i];
+    		
+    		int err = chdir(temp);
+    		char *t = check_cd_err(working, temp);
+    		free(working);
+    		return t;
+    	}
+    	else
+    	{
+			int w_len = strlen(working);
+			char *temp = malloc((w_len + p_len + 1) * sizeof(char));
+			strncpy(temp, working, w_len);
+			temp[w_len] = '/';
+			for (int i = 0; i < p_len; ++i)
+				temp[w_len + i + 1] = path[i];
 
-        free(home);
+			free(home);
 
-        int err = chdir(temp);
-        return check_cd_err(working, temp);
+			int err = chdir(temp);
+			return check_cd_err(working, temp);
+		}
     }
 }

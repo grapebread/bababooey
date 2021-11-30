@@ -1,0 +1,39 @@
+total 92
+-rw-r--r-- 1 ssikder20 student  1189 Nov 29  2021 args.c
+-rw-r--r-- 1 ssikder20 student   157 Nov 29  2021 args.h
+-rw-r--r-- 1 ssikder20 student  3000 Nov 29  2021 args.o
+-rwxr-xr-x 1 ssikder20 student 22424 Nov 29  2021 bababooey
+-rw-r--r-- 1 ssikder20 student   936 Nov 29  2021 bababooey.c
+-rw-r--r-- 1 ssikder20 student  3365 Nov 29  2021 cd.c
+-rw-r--r-- 1 ssikder20 student   117 Nov 29  2021 cd.h
+-rw-r--r-- 1 ssikder20 student  4720 Nov 29  2021 cd.o
+-rw-r--r-- 1 ssikder20 student     0 Nov 29  2021 heh
+-rw-r--r-- 1 ssikder20 student  2027 Nov 29  2021 main.c
+-rw-r--r-- 1 ssikder20 student  4040 Nov 29  2021 main.o
+-rw-r--r-- 1 ssikder20 student    11 Nov 29  2021 make
+-rw-r--r-- 1 ssikder20 student   331 Nov 29  2021 Makefile
+-rw-r--r-- 1 ssikder20 student     0 Nov 29  2021 pipe.c
+-rw-r--r-- 1 ssikder20 student    39 Nov 29  2021 pipe.h
+-rw-r--r-- 1 ssikder20 student    11 Nov 29  2021 README.md
+-rw-r--r-- 1 ssikder20 student  1007 Nov 29  2021 redirection.c
+-rw-r--r-- 1 ssikder20 student    81 Nov 29  2021 redirection.h
+-rw-r--r-- 1 ssikder20 student  2608 Nov 29  2021 redirection.o
+args.c
+args.h
+args.o
+bababooey
+bababooey.c
+cd.c
+cd.h
+cd.o
+heh
+main.c
+main.o
+make
+Makefile
+pipe.c
+pipe.h
+README.md
+redirection.c
+redirection.h
+redirection.o

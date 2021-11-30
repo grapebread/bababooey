@@ -38,13 +38,6 @@ int redirection(char ** command){
       fd1 = open(dest, O_WRONLY | O_APPEND | O_CREAT, 0644);
       test = dup2(fd1, STDOUT_FILENO);
     }
-    if (!strcmp(*command, "|")){
-      char buff[500];
-      *command = NULL;
-      command++;
-      dest = *command;
-      FILE * output = popen(*command, "w");
-    }
     command++;
   }
   return fd1;

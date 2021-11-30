@@ -48,6 +48,7 @@ int redirection(char **command)
       dest = *command;
       fd1 = open(dest, O_WRONLY | O_APPEND | O_CREAT, 0644);
       test = dup2(fd1, STDOUT_FILENO);
+      close(fd1);
     }
     if (!strcmp(*command, "|"))
     {

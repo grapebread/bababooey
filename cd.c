@@ -4,8 +4,12 @@
 #include <pwd.h>
 #include <unistd.h>
 
+#include "err.h"
+
 #define BUFF_SIZE 512
 
+/* Uses the current user's username to create a string which leads
+to their home directory. */
 char *get_home()
 {
     char *home = "/home/";
@@ -18,6 +22,8 @@ char *get_home()
     return start;
 }
 
+/* Get the current working directory (i.e. where the program executable
+is located) using getcwd() in <unistd.h> */
 char *get_working()
 {
     char *cwd = malloc(BUFF_SIZE * sizeof(char)); // this is both wasteful and not enough
@@ -26,6 +32,9 @@ char *get_working()
     return cwd;
 }
 
+/* Check for specific prefixes in the arguments (path variable) and
+set and return the current directory to the correct path or just return
+the current working directory if there's any issues. */
 char *cd(char *working, char *path)
 {
     char *home = get_home();
@@ -49,68 +58,92 @@ char *cd(char *working, char *path)
 
                 err = chdir(temp);
 
-                if (err != 0)
-                {
-                    printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
-                    return working;
-                }
-
                 free(home);
-                free(working);
 
-                return temp;
+                return check_cd_err(working, temp);
             }
         }
 
         err = chdir(home);
-
-        if (err != 0)
-        {
-            printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
-            return working;
-        }
-
-        return home;
+        return check_cd_err(working, home);
     }
     else if (!strncmp(path, "..", 2))
     {
-        char *cwd = get_working();
-        if (!strcmp(cwd, "/"))
-            return working;
-
-        for (int i = strlen(cwd) - 1; i > 0; --i)
+        if (!strcmp(path, ".."))
         {
-            if (cwd[i] == '/')
+            char *cwd = get_working();
+            if (!strcmp(cwd, "/"))
+                return working;
+
+            for (int i = strlen(cwd) - 1; i > 0; --i)
             {
-                cwd[i] = '\0';
-                break;
+                if (cwd[i] == '/')
+                {
+                    cwd[i] = '\0';
+                    break;
+                }
             }
+
+            free(home);
+
+            int err = chdir(cwd);
+            return check_cd_err(working, cwd);
         }
-
-        free(home);
-        free(working);
-
-        int err = chdir(cwd);
-        if (err != 0)
+        else
         {
-            printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
-            return working;
-        }
+            char *cwd = get_working();
+            int w_len = strlen(cwd);
+            char *temp = malloc((w_len + p_len - 2) * sizeof(char));
+            strcpy(temp, cwd);
+            free(cwd);
 
-        return cwd;
+            int slash;
+            for (int i = w_len - 1; i > 0; --i)
+            {
+                if (cwd[i] == '/')
+                {
+                    slash = i;
+                    break;
+                }
+            }
+
+            int final;
+            for (int i = 2; i < p_len; ++i)
+            {
+                temp[slash + i - 2] = path[i];
+                final = slash + i - 2;
+            }
+            temp[final + 1] = '\0';
+
+            int err = chdir(temp);
+            return check_cd_err(working, temp);
+        }
     }
     else if (!strncmp(path, "/", 1))
     {
         free(home);
         int err = chdir(path);
 
-        if (err != 0)
+        return check_cd_err(working, path);
+    }
+    else if (!strncmp(path, ".", 1))
+    {
+        if (!strncmp(path, "./", 2))
         {
-            printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
-            return working;
+            char *cwd = get_working();
+            int c_len = strlen(cwd);
+            char *temp = malloc((c_len + p_len - 1) * sizeof(char));
+            strcpy(temp, cwd);
+            free(cwd);
+
+            for (int i = 1; i < p_len; ++i)
+                temp[c_len + i - 1] = path[i];
+
+            int err = chdir(temp);
+            return check_cd_err(working, temp);
         }
 
-        return path;
+        return working;
     }
     else
     {
@@ -119,21 +152,11 @@ char *cd(char *working, char *path)
         strncpy(temp, working, w_len);
         temp[w_len] = '/';
         for (int i = 0; i < p_len; ++i)
-          temp[w_len + i + 1] = path[i];
-         printf("%s\n", temp);
+            temp[w_len + i + 1] = path[i];
 
         free(home);
 
         int err = chdir(temp);
-
-        if (err != 0)
-        {
-            printf("The directory (%s) does not exist or there has been an error opening this directory.\n", path);
-            return working;
-        }
-
-        free(working);
-
-        return temp;
+        return check_cd_err(working, temp);
     }
 }

@@ -37,13 +37,24 @@ int main(void)
         int n = count_x(c, ';') + 1;
         char ***commands = parse_multi(c);
 
-        if (strcmp(commands[0][0], "exit") == 0)
-        {
-            exit(0);
-        }
-
         for (int i = 0; i < n; ++i)
         {
+            if (strcmp(commands[i][0], "exit") == 0)
+            {
+                exit(0);
+            }
+
+            if (strcmp(commands[i][0], "cd") == 0)
+            {
+                if (commands[i][1])
+                    working = cd(working, commands[i][1]);
+                else
+                {
+                    working = cd(working, "~");
+                }
+                ++i;
+            }
+
             if (fork())
             {
                 int status;
@@ -51,16 +62,6 @@ int main(void)
             }
             else
             {
-                if (strcmp(commands[i][0], "cd") == 0)
-                {
-                    if (commands[i][1])
-                        working = cd(working, commands[i][1]);
-                    else{
-                        working = cd(working, "~");
-                      }
-                    ++i;
-                }
-
                 if (i < n)
                 {
                     int backup_stdout = dup(STDOUT_FILENO);

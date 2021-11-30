@@ -9,7 +9,7 @@
 
 int redirection(char ** command){
   char * dest;
-  int fd1;
+  int fd1 = -1;
   int test;
   char **front = command;
   while (*command){

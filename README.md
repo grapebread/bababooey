@@ -17,7 +17,7 @@ Made by Shuprovo Sikder and Geoffrey Lin
 
 ## Extra Features
 
-- Most if not all cases for `cd` should be implemented but note the bugs below
+- All cases for `cd` except for `cd -` should be implemented but keep in mind section below
 
 ## Bugs and Things to Know
 

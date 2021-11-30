@@ -67,6 +67,7 @@ int main(void)
                     int backup_stdin = dup(STDIN_FILENO);
                     int j = redirection(commands[i]);
                     execvp(commands[i][0], commands[i]);
+                    close(j);
                     dup2(backup_stdout, STDOUT_FILENO);
                     dup2(backup_stdin, STDIN_FILENO);
                     printf("Command (%s) does not exist.\n", commands[i][0]);

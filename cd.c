@@ -80,7 +80,7 @@ char *cd(char *working, char *path)
 
         for (int i = strlen(cwd) - 1; i > 0; --i)
         {
-            if (cwd[i - 1] == '/')
+            if (cwd[i] == '/')
             {
                 cwd[i] = '\0';
                 break;
@@ -119,7 +119,7 @@ char *cd(char *working, char *path)
         strncpy(temp, working, w_len);
         temp[w_len] = '/';
         for (int i = 0; i < p_len; ++i)
-          temp[w_len + i] = path[i];
+          temp[w_len + i + 1] = path[i];
          printf("%s\n", temp);
 
         free(home);

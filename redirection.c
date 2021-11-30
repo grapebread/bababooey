@@ -10,8 +10,8 @@
 int redirection(char ** command){
   char * dest;
   int fd1;
-  int i = -1;
   int test;
+  char **front = command;
   while (*command){
     if (!strcmp(*command, ">")){
       *command = NULL;
@@ -19,7 +19,6 @@ int redirection(char ** command){
       dest = *command;
       fd1 = open(dest, O_WRONLY | O_TRUNC | O_CREAT, 0644);
       test = dup2(fd1, STDOUT_FILENO);
-      i = 0;
     }
     if (!strcmp(*command, "<")){
       *command = NULL;
@@ -31,7 +30,6 @@ int redirection(char ** command){
         exit(0);
       }
       test = dup2(fd1, STDIN_FILENO);
-      i = 1;
     }
     if (!strcmp(*command, ">>")){
       *command = NULL;
@@ -39,9 +37,15 @@ int redirection(char ** command){
       dest = *command;
       fd1 = open(dest, O_WRONLY | O_APPEND | O_CREAT, 0644);
       test = dup2(fd1, STDOUT_FILENO);
-      i = 0;
+    }
+    if (!strcmp(*command, "|")){
+      char buff[500];
+      *command = NULL;
+      command++;
+      dest = *command;
+      FILE * output = popen(*command, "w");
     }
     command++;
   }
-  return i;
+  return fd1;
 }

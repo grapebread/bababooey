@@ -30,7 +30,7 @@ Made by Shuprovo Sikder and Geoffrey Lin
 
 ## Function Headers
 
-```
+```C
 int count_x(char *str, char c);
 char ***parse_multi(char *line);
 char **parse_args(char *line, char delimiter);

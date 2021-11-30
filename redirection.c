@@ -53,7 +53,8 @@ int redirection(char **command)
     {
       *command = NULL;
       command++;
-      char str[1000];
+      char str[1024];
+      memset(str, 0, 1024);
       char **start = front;
       while (*start)
       {
@@ -61,8 +62,19 @@ int redirection(char **command)
         strcat(str, " ");
         start++;
       }
+
+      char other[1024];
+      memset(other, 0, 1024);
+      char **end = command;
+      while (*end)
+      {
+        strcat(other, *end);
+        strcat(other, " ");
+        ++end;
+      }
+
       FILE *test = popen(str, "r");
-      FILE *test2 = popen(*command, "w");
+      FILE *test2 = popen(other, "w");
       char buffer[512];
       while (fgets(buffer, 512, test))
       {

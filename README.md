@@ -17,7 +17,7 @@ Made by Shuprovo Sikder and Geoffrey Lin
 
 ## Extra Features
 
-- All cases for `cd` except for `cd -` and `cd ~username~` should be implemented but keep in mind section below
+- All cases for `cd` except for `cd -` and `cd ~username` should be implemented but keep in mind section below
 
 ## Bugs and Things to Know
 
